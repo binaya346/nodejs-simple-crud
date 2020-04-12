@@ -1,17 +1,6 @@
-const express = require("express");
 const mongoose = require("mongoose");
 const joi = require("joi");
 joi.objectId = require("joi-objectid")(joi);
-
-const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-mongoose
-  .connect("mongodb://localhost/quarantine")
-  .then(() => console.log("connected to mongodb"))
-  .catch(err => console.error("couldn't connect to database"));
 
 const Category = mongoose.model(
   "Category",
@@ -23,9 +12,6 @@ const Category = mongoose.model(
     level: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "CategoryLevel"
-    },
-    isMainCategory: {
-      type: Boolean
     },
     parent: [
       {
@@ -45,11 +31,11 @@ const validateInput = data => {
       .max(25)
       .required(),
     level: joi.objectId().required(),
-    isMainCategory: joi
-      .boolean()
-      .strict()
+    type: joi
+      .string()
+      .valid("Main", "Sub")
       .required(),
-    parent: data.isMainCategory ? joi.optional() : joi.objectId().required()
+    parent: data.type === "Main" ? joi.optional() : joi.objectId().required()
   };
   return joi.validate(data, schema);
 };
