@@ -1,5 +1,4 @@
 const { Category, validateInput } = require("../models/Category");
-const { CategoryLevel } = require("../models/CategoryLevel");
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
@@ -50,39 +49,27 @@ router.delete("/:id", async (req, res) => {
 
 //Helper functions
 const postCategory = async (data, res) => {
-  const { level, parent, type, name } = data;
-  const categoryLevel = await CategoryLevel.findById(level);
+  const { parent, type, name } = data;
   const parentCategory = await Category.findById(parent);
 
-  if (!categoryLevel)
-    return res.status(404).send("Error: Invalid Category Level!");
   if (!parentCategory && type !== "Main")
     return res.status(404).send("Error 404: Parent Category Doesn't exist");
 
   let category;
 
-  if (
-    (categoryLevel.level === "First" && type === "Main") ||
-    (categoryLevel.level !== "First" && type !== "Main")
-  ) {
-    category = new Category({
-      name: name,
-      level: level,
-      type: type,
-      parent: type == "Main" ? null : parent,
-    });
+  category = new Category({
+    name: name,
+    type: type,
+    parent: type == "Main" ? null : parent,
+  });
 
-    try {
-      category = await category.save();
-    } catch (err) {
-      return res.status(400).send(`Error 400: Bad request ${err.errmsg}`);
-    }
-  } else {
-    return res
-      .status(400)
-      .send("Error 400: Category level and Category Type are incompatible");
+  try {
+    category = await category.save();
+  } catch (err) {
+    return res.status(400).send(`Error 400: Bad request ${err.errmsg}`);
   }
-  return res.send(`Successfully added category ${category}`);
+
+  return res.send(category);
 };
 
 module.exports = router;

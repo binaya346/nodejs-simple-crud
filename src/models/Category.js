@@ -7,35 +7,23 @@ const Category = mongoose.model(
   new mongoose.Schema({
     name: {
       type: String,
-      unique: true
-    },
-    level: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "CategoryLevel"
+      unique: true,
     },
     parent: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Category"
-      }
+        ref: "Category",
+      },
     ],
-    type: String
+    type: String,
   })
 );
 
-const validateInput = data => {
+const validateInput = (data) => {
   const schema = {
-    name: joi
-      .string()
-      .min(3)
-      .max(25)
-      .required(),
-    level: joi.objectId().required(),
-    type: joi
-      .string()
-      .valid("Main", "Sub")
-      .required(),
-    parent: data.type === "Main" ? joi.optional() : joi.objectId().required()
+    name: joi.string().min(3).max(25).required(),
+    type: joi.string().valid("Main", "Sub").required(),
+    parent: data.type === "Main" ? joi.optional() : joi.objectId().required(),
   };
   return joi.validate(data, schema);
 };

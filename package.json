@@ -7,6 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^13.9.5",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "joi": "^14.3.1",
     "joi-objectid": "^3.0.1",
