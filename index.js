@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const category = require("./src/routes/categories");
 const author = require("./src/routes/authors");
+const user = require("./src/routes/users");
 const app = express();
 const cors = require("cors");
 
@@ -17,6 +18,7 @@ app.use(express.static("public"));
 app.use(cors());
 app.use("/api/category", category);
 app.use("/api/author", author);
+app.use("/api/users", user);
 
 const port = process.env.port || 5000;
 app.listen(port, () => {
