@@ -3,6 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const router = express.Router();
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
 
 // router.get("/", async (req, res) => {
 //   const users = await User.find()
@@ -25,7 +27,11 @@ router.post("/login", async (req, res) => {
 
   try {
     if (await bcrypt.compare(password, user.password)) {
-      res.send("success");
+      const accessToken = jwt.sign(
+        { name: user.email },
+        process.env.ACCESS_TOKEN_SECRET
+      );
+      res.json({ accessToken: accessToken, id: user._id });
     } else {
       res.send("Password didn't match");
     }
@@ -42,31 +48,32 @@ router.post("/register", async (req, res) => {
   if (error) {
     return res.status(400).send(error.details[0].message);
   }
+
   postUser(req.body, res);
 });
 
-router.put("/:id", async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send("Error 400: Bad Request, Invalid User Id");
+// router.put("/:id", async (req, res) => {
+//   if (!mongoose.Types.ObjectId.isValid(req.params.id))
+//     return res.status(400).send("Error 400: Bad Request, Invalid User Id");
 
-  const post = await User.findById(req.params.id);
-  if (post) {
-    postUser(req.body, res);
-  } else {
-    res.status(404).send("Error 404:Could not find the User id");
-  }
-});
+//   const post = await User.findById(req.params.id);
+//   if (post) {
+//     postUser(req.body, res);
+//   } else {
+//     res.status(404).send("Error 404:Could not find the User id");
+//   }
+// });
 
-router.delete("/:id", async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send("Error 400: Bad Request, Invalid User Id");
+// router.delete("/:id", async (req, res) => {
+//   if (!mongoose.Types.ObjectId.isValid(req.params.id))
+//     return res.status(400).send("Error 400: Bad Request, Invalid User Id");
 
-  const post = await User.findByIdAndRemove(req.params.id);
-  if (!post)
-    return res.status(404).send("Error 404: Could not find the User id");
+//   const post = await User.findByIdAndRemove(req.params.id);
+//   if (!post)
+//     return res.status(404).send("Error 404: Could not find the User id");
 
-  res.send("Successfully deleted the User");
-});
+//   res.send("Successfully deleted the User");
+// });
 
 //Helper functions
 const postUser = async (data, res) => {
@@ -95,8 +102,6 @@ const postUser = async (data, res) => {
     user_type,
     password: await bcrypt.hash(password, 10),
   });
-
-  console.log(post, "post");
 
   try {
     post = await post.save();

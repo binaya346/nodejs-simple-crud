@@ -1,9 +1,11 @@
 const { Category, validateInput } = require("../models/Category");
 const express = require("express");
 const mongoose = require("mongoose");
+const { authenticateToken } = require("../helper/funtions");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", authenticateToken, async (req, res) => {
+  console.log(req.user.name, "email");
   const categories = await Category.find().populate("level").populate("parent");
   res.send(categories);
 });

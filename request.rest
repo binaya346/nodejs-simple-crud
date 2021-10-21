@@ -1,7 +1,10 @@
-POST http://localhost:5000/api/users/login
-Content-Type: application/json
+# POST http://localhost:5000/api/users/login
+# Content-Type: application/json
 
-{
-    "email":"rijalbinaya2@gmail.com",
-    "password":"huawei@100"
-}
+# {
+#     "email":"rijalbinaya2@gmail.com",
+#     "password":"huawei@100"
+# }
+
+GET http://localhost:5000/api/category
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicmlqYWxiaW5heWEyQGdtYWlsLmNvbSIsImlhdCI6MTYzNDgzNjkxOH0.ehFpQYMmwkogXP22cgp74UZqvHOYPqW_4z5z2FScBs4
